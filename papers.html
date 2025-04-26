@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Papers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="border-b px-4 py-4 bg-white">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-purple-400 rounded" aria-hidden="true"></div>
+                <a href="/" class="font-medium text-gray-800 hover:text-purple-500 transition-colors">Mehjabin Rahman</a>
+            </div>
+            <div id="navigation-links" class="flex gap-6 text-gray-600">
+                <!-- Navigation links will be dynamically inserted here -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto py-8 px-4">
+        <div id="papers-container" class="space-y-6">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <script src="js/papers.js"></script>
+    <script src="js/config.js"></script>
+    <script>
+        // Improved function to create a paper card
+        function createPaperCard(paper) {
+            return `
+                <article 
+                    class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer" 
+                    onclick="openPaperDetails('${paper.url}')"
+                    role="button"
+                    tabindex="0"
+                    aria-label="View details of ${paper.title}"
+                    onkeypress="handleKeyPress(event, '${paper.url}')"
+                >
+                    <h2 class="text-xl font-medium mb-4">${paper.title}</h2>
+                    <p class="text-gray-600 mb-4">${paper.description}</p>
+                    <div class="text-gray-500">
+                        ${paper.date} &middot; ${paper.authors}
+                    </div>
+                </article>
+            `;
+        }
+
+        // Render paper cards
+        function renderPapers() {
+            const container = document.getElementById('papers-container');
+            if (!papers || papers.length === 0) {
+                container.innerHTML = `
+                    <p class="text-gray-500 text-center">No papers available at the moment.</p>
+                `;
+                return;
+            }
+            container.innerHTML = papers.map(paper => createPaperCard(paper)).join('');
+        }
+
+        // Handle opening paper details
+        function openPaperDetails(url) {
+            if (url) {
+                window.location.href = url;
+            } else {
+                console.error('Paper URL is not provided.');
+            }
+        }
+
+        // Handle keyboard navigation for paper cards
+        function handleKeyPress(event, url) {
+            if (event.key === 'Enter') {
+                openPaperDetails(url);
+            }
+        }
+
+        // Function to generate navigation links
+        function renderNavigationLinks() {
+            const container = document.getElementById('navigation-links');
+            const currentPage = window.location.pathname.split('/').pop();
+
+            tags.forEach(tag => {
+                const link = document.createElement('a');
+                const href = `${tag.toLowerCase()}.html`;
+                link.href = href;
+                link.textContent = tag;
+                link.className = href === currentPage ? 'underline text-purple-500' : 'hover:text-purple-500 transition-colors';
+                container.appendChild(link);
+            });
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPapers();
+            renderNavigationLinks();
+        });
+    </script>
+</body>
+
+</html>

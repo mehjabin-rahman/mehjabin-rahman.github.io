@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paper</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    #content {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #333;
+    }
+
+    pre,
+    code {
+      background: #f4f4f4;
+      padding: 10px;
+      display: block;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+
+    .error-message {
+      color: #e53e3e;
+      background-color: #fef2f2;
+      border: 1px solid #feb2b2;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="border-b px-4 py-4 bg-white">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 bg-purple-400 rounded" aria-hidden="true"></div>
+        <a href="/" class="font-medium text-gray-800 hover:text-purple-500 transition-colors">Pascal Michaillat</a>
+      </div>
+      <div id="navigation-links" class="flex gap-6 text-gray-600">
+        <!-- Navigation links will be dynamically inserted here -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div id="content" class="p-4 bg-white rounded-lg shadow">
+    Loading...
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script>
+    // Function to generate navigation links
+    function renderNavigationLinks() {
+      const container = document.getElementById('navigation-links');
+      const currentPage = window.location.pathname.split('/').pop();
+
+      tags.forEach(tag => {
+        const link = document.createElement('a');
+        const href = `../${tag.toLowerCase()}.html`;
+        link.href = href;
+        link.textContent = tag;
+        link.className = 'hover:text-purple-500 transition-colors';
+        container.appendChild(link);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      renderNavigationLinks();
+      const contentDiv = document.getElementById("content");
+
+      // Get the query parameters from the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const contentParam = urlParams.get("content");
+
+      if (contentParam) {
+        // Construct the Markdown file name
+        const markdownFileName = `${contentParam}.md`;
+
+        // Fetch the corresponding Markdown file
+        fetch(markdownFileName)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+          })
+          .then((markdown) => {
+            // Convert Markdown to HTML using marked.js
+            const htmlContent = marked.parse(markdown);
+
+            // Display the rendered content inside the #content div
+            contentDiv.innerHTML = htmlContent;
+          })
+          .catch((error) => {
+            // Display an error message in case of failure
+            contentDiv.innerHTML = `
+            <div class="error-message">
+              Unable to load content. Please try again later or check the file name.
+            </div>
+          `;
+            console.error("Error fetching Markdown file:", error);
+          });
+      } else {
+        // Display a message if no content parameter is provided
+        contentDiv.innerHTML = `
+        <div class="error-message">
+          No content specified in the URL. Please provide a valid file name.
+        </div>
+      `;
+      }
+    });
+  </script>
+
+</body>
+
+</html>
