@@ -108,14 +108,14 @@
             }
 
             // Set profile image
-            const profileImg = document.getElementById("profile-img");
-            if (about.image) {
-                profileImg.src = about.image;
-                profileImg.alt = `Profile picture of ${about.name}`;
-            } else {
-                console.warn("Profile image is missing in 'about'.");
-                profileImg.alt = "Default profile picture";
-            }
+            // const profileImg = document.getElementById("profile-img");
+            // if (about.image) {
+            //     profileImg.src = about.image;
+            //     profileImg.alt = `Profile picture of ${about.name}`;
+            // } else {
+            //     console.warn("Profile image is missing in 'about'.");
+            //     profileImg.alt = "Default profile picture";
+            // }
 
             // Set document title
             document.title = about.name || "About Me";
